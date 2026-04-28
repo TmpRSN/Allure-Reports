@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-
   repository_dispatch:
     types: [allure-update]
 
@@ -28,11 +27,6 @@ jobs:
           mkdir -p allure-results
           cp -r results-repo/allure-results/. allure-results/
 
-      - name: Debug Allure Results
-        run: |
-          echo "Listing files:"
-          ls -R allure-results
-
       - name: Install Allure
         run: |
           curl -L -o allure.tgz https://github.com/allure-framework/allure2/releases/download/2.39.0/allure-2.39.0.tgz
@@ -44,20 +38,35 @@ jobs:
         run: |
           allure generate allure-results --clean -o allure-report
 
-      # 🔥 FIX: Routing + Cache issue (combined)
-      - name: Fix GitHub Pages routing & caching
+      # 🔥 VERSIONING FIX (REAL SOLUTION)
+      - name: Prepare versioned report
         run: |
-          # SPA routing fix
-          cp allure-report/index.html allure-report/404.html
+          VERSION=$(date +%s)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-          # Cache busting (VERY IMPORTANT)
-          echo "buildTime=$(date +%s)" > allure-report/build.txt
+          mkdir -p deploy/$VERSION
+          cp -r allure-report/* deploy/$VERSION/
 
-          # Ensure GitHub Pages serves static correctly
-          touch allure-report/.nojekyll
+      # 🔥 Create redirect to latest report
+      - name: Create index redirect
+        run: |
+          cat <<EOF > deploy/index.html
+          <html>
+          <head>
+              <meta http-equiv="refresh" content="0; url=./$VERSION/">
+          </head>
+          <body>
+              Redirecting to latest report...
+          </body>
+          </html>
+          EOF
+
+      - name: Add .nojekyll
+        run: |
+          touch deploy/.nojekyll
 
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: allure-report
+          publish_dir: deploy
