@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # ✅ Install Allure (FIXED - no PPA, no broken URL)
+      # ✅ Install Allure
       - name: Install Allure
         run: |
           curl -L -o allure.tgz https://github.com/allure-framework/allure2/releases/download/2.39.0/allure-2.39.0.tgz
@@ -22,12 +22,17 @@ jobs:
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
           allure --version
 
-      # ✅ Generate report from committed allure-results
+      # ✅ Generate report
       - name: Generate Allure Report
         run: |
           allure generate allure-results --clean -o allure-report
 
-      # ✅ Deploy to GitHub Pages
+      # 🔥 FIX: Enable routing for GitHub Pages (VERY IMPORTANT)
+      - name: Fix GitHub Pages routing
+        run: |
+          cp allure-report/index.html allure-report/404.html
+
+      # ✅ Deploy
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
