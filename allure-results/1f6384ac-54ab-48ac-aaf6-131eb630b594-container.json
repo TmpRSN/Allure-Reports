@@ -1,1 +1,0 @@
-{"uuid":"1f6384ac-54ab-48ac-aaf6-131eb630b594","name":"ui.login.CTMLoginTest.setUp","children":["06101699-648c-456d-9b8c-c8018ae1faaf"],"description":"","befores":[{"name":"setUp","status":"passed","stage":"finished","description":"","steps":[],"attachments":[],"parameters":[],"start":1777306288396,"stop":1777306294306}],"afters":[],"start":1777306288396,"stop":1777306294306}
