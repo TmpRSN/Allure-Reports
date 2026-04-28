@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ✅ Checkout Reports repo
       - name: Checkout Reports repository
         uses: actions/checkout@v3
 
@@ -21,11 +22,17 @@ jobs:
         run: |
           git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/TmpRSN/Allure-Results.git results-repo
 
-      # 📁 Copy results
+      # 🔥 FIXED: Copy ONLY inner allure-results (avoid nested folder issue)
       - name: Prepare Allure Results
         run: |
           mkdir -p allure-results
-          cp -r results-repo/* allure-results/
+          cp -r results-repo/allure-results/. allure-results/
+
+      # 🔍 DEBUG (optional but useful)
+      - name: Debug Allure Results
+        run: |
+          echo "Listing final allure-results:"
+          ls -R allure-results
 
       # ✅ Install Allure
       - name: Install Allure
@@ -34,13 +41,14 @@ jobs:
           tar -zxvf allure.tgz
           sudo mv allure-2.39.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+          allure --version
 
-      # ✅ Generate report
+      # ✅ Generate Allure Report
       - name: Generate Allure Report
         run: |
           allure generate allure-results --clean -o allure-report
 
-      # 🔥 Fix routing issue (important for UI)
+      # 🔥 Fix GitHub Pages SPA routing issue
       - name: Fix GitHub Pages routing
         run: |
           cp allure-report/index.html allure-report/404.html
