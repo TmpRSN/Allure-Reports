@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+  # 🔥 THIS enables trigger from another repo
+  repository_dispatch:
+    types: [allure-update]
+
 permissions:
   contents: write
 
@@ -22,16 +26,16 @@ jobs:
         run: |
           git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/TmpRSN/Allure-Results.git results-repo
 
-      # 🔥 FIXED: Copy ONLY inner allure-results (avoid nested folder issue)
+      # 🔥 FIXED: correct folder copy
       - name: Prepare Allure Results
         run: |
           mkdir -p allure-results
           cp -r results-repo/allure-results/. allure-results/
 
-      # 🔍 DEBUG (optional but useful)
+      # 🔍 Debug (optional)
       - name: Debug Allure Results
         run: |
-          echo "Listing final allure-results:"
+          echo "Listing files:"
           ls -R allure-results
 
       # ✅ Install Allure
@@ -41,19 +45,18 @@ jobs:
           tar -zxvf allure.tgz
           sudo mv allure-2.39.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
-          allure --version
 
-      # ✅ Generate Allure Report
+      # ✅ Generate report
       - name: Generate Allure Report
         run: |
           allure generate allure-results --clean -o allure-report
 
-      # 🔥 Fix GitHub Pages SPA routing issue
+      # 🔥 Fix GitHub Pages routing
       - name: Fix GitHub Pages routing
         run: |
           cp allure-report/index.html allure-report/404.html
 
-      # 🚀 Deploy report
+      # 🚀 Deploy
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
