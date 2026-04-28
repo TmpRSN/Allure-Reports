@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+
+  # 🔥 THIS enables trigger from another repo
   repository_dispatch:
     types: [allure-update]
 
@@ -15,16 +17,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ✅ Checkout repo
+      # ✅ Checkout Reports repo
       - name: Checkout Reports repository
         uses: actions/checkout@v3
 
-      # 🔐 Clone private results repo
+      # 🔐 Clone PRIVATE Allure Results repo
       - name: Clone Allure Results (Private Repo)
         run: |
           git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/TmpRSN/Allure-Results.git results-repo
 
-      # 📁 Copy results
+      # 🔥 FIXED: correct folder copy
       - name: Prepare Allure Results
         run: |
           mkdir -p allure-results
@@ -49,27 +51,13 @@ jobs:
         run: |
           allure generate allure-results --clean -o allure-report
 
-      # 🔥 FINAL FIX: routing + cache handling
-      - name: Fix routing & caching
+
+      # 🔥 Fix GitHub Pages routing
+      - name: Fix GitHub Pages routing
         run: |
-          # SPA routing fix
           cp allure-report/index.html allure-report/404.html
 
-          # Disable Jekyll processing
-          touch allure-report/.nojekyll
-
-          # Inject cache-busting meta + auto reload
-          sed -i 's/<head>/<head>\
-          <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />\
-          <meta http-equiv="Pragma" content="no-cache" />\
-          <meta http-equiv="Expires" content="0" />\
-          <script>\
-          if (!window.location.href.includes("reload=true")) {\
-              window.location.href = window.location.href + (window.location.search ? "&" : "?") + "reload=true";\
-          }\
-          </script>/' allure-report/index.html
-
-      # 🚀 Deploy to GitHub Pages
+      # 🚀 Deploy
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
