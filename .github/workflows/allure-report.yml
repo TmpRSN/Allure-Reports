@@ -5,13 +5,27 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Reports repository
         uses: actions/checkout@v3
+
+      # 🔐 Clone PRIVATE Allure Results repo
+      - name: Clone Allure Results (Private Repo)
+        run: |
+          git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/TmpRSN/Allure-Results.git results-repo
+
+      # 📁 Copy results
+      - name: Prepare Allure Results
+        run: |
+          mkdir -p allure-results
+          cp -r results-repo/* allure-results/
 
       # ✅ Install Allure
       - name: Install Allure
@@ -20,19 +34,18 @@ jobs:
           tar -zxvf allure.tgz
           sudo mv allure-2.39.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
-          allure --version
 
       # ✅ Generate report
       - name: Generate Allure Report
         run: |
           allure generate allure-results --clean -o allure-report
 
-      # 🔥 FIX: Enable routing for GitHub Pages (VERY IMPORTANT)
+      # 🔥 Fix routing issue (important for UI)
       - name: Fix GitHub Pages routing
         run: |
           cp allure-report/index.html allure-report/404.html
 
-      # ✅ Deploy
+      # 🚀 Deploy report
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
