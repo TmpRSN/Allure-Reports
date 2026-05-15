@@ -5,10 +5,12 @@
 /* Sidebar logo */
 .side-nav__brand {
     background: url('./rs-logo.png') no-repeat center center !important;
-    background-size: 170px auto !important;
+    background-size: 180px auto !important;
     height: 70px !important;
     margin-top: 8px !important;
     margin-bottom: 12px !important;
+    margin-right: 5px !important;
+    margin-left: 5px !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
