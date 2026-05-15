@@ -5,18 +5,23 @@
 /* Sidebar logo */
 .side-nav__brand {
     background: url('./rs-logo.png') no-repeat center center !important;
-    background-size: 180px auto !important;
-    height: 70px !important;
+    background-size: 170px auto !important;
+    height: 75px !important;
+
     margin-top: 8px !important;
-    margin-bottom: 12px !important;
-    margin-right: 5px !important;
+    margin-bottom: 15px !important;
+
     margin-left: 5px !important;
+    margin-right: 5px !important;
+
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
+
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
 }
 
-/* Hide default ALLURE logo/text */
+/* Hide default ALLURE branding */
 .side-nav__brand span,
 .side-nav__brand svg {
     display: none !important;
@@ -28,23 +33,43 @@
 }
 
 /* =========================================
-   CHANGE ONLY MAIN DASHBOARD TITLE
+   DASHBOARD TITLE
    ========================================= */
 
-/* Hide only the first dashboard title */
+/* Hide original title */
 .dashboard-page__title {
     visibility: hidden !important;
     position: relative !important;
+    height: 40px !important;
 }
 
-/* Replace with TEST REPORT */
+/* Custom title */
 .dashboard-page__title::after {
     content: "TEST REPORT" !important;
+
     visibility: visible !important;
     position: absolute !important;
+
     left: 0 !important;
     top: 0 !important;
-    font-size: 34px !important;
+
+    font-size: 32px !important;
     font-weight: 700 !important;
-    color: #000 !important;
+    letter-spacing: 1px !important;
+
+    color: #111 !important;
+}
+
+/* =========================================
+   OPTIONAL UI POLISH
+   ========================================= */
+
+/* Smooth cards */
+.widget {
+    border-radius: 8px !important;
+}
+
+/* Better sidebar icons alignment */
+.side-nav__item {
+    align-items: center !important;
 }
