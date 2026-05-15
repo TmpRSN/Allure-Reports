@@ -14,30 +14,29 @@
     align-items: center !important;
 }
 
-/* Hide default ALLURE branding */
+/* Hide default ALLURE logo/text */
 .side-nav__brand span,
 .side-nav__brand svg {
     display: none !important;
 }
 
-/* Better sidebar spacing */
+/* Sidebar spacing */
 .side-nav {
     padding-top: 5px !important;
 }
 
 /* =========================================
-   CHANGE REPORT TITLE
+   CHANGE ONLY MAIN DASHBOARD TITLE
    ========================================= */
 
-/* Hide original ALLURE REPORT text */
-.dashboard__title,
-.widget__title {
+/* Hide only the first dashboard title */
+.dashboard-page__title {
     visibility: hidden !important;
     position: relative !important;
 }
 
 /* Replace with TEST REPORT */
-.dashboard__title::after {
+.dashboard-page__title::after {
     content: "TEST REPORT" !important;
     visibility: visible !important;
     position: absolute !important;
