@@ -82,8 +82,11 @@ jobs:
            # Change browser tab title
            sed -i 's#<title>Allure Report</title>#<title>Test Report</title>#' allure-report/index.html
 
-           # Replace favicon reference
-           sed -i 's#assets/favicon-BDLHVmV7.ico#favicon.ico#g' allure-report/index.html
+           # Copy custom favicon
+           cp .github/allure-assets/rs-favicon.ico allure-report/favicon.ico
+
+           # Replace all generated favicon references
+           sed -i 's#href="assets/favicon[^"]*\.ico"#href="favicon.ico"#g' allure-report/index.html
 
       # 🔥 9. Fix routing (SPA GitHub Pages support)
       - name: Fix GitHub Pages routing
