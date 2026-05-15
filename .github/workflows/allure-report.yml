@@ -79,6 +79,9 @@ jobs:
           # Inject custom CSS into index.html
           sed -i 's#</head>#<link rel="stylesheet" href="app/styles.css"></head>#' allure-report/index.html
 
+           # Change browser tab title
+           sed -i 's#<title>Allure Report</title>#<title>Test Report</title>#' allure-report/index.html
+
       # 🔥 9. Fix routing (SPA GitHub Pages support)
       - name: Fix GitHub Pages routing
         run: |
