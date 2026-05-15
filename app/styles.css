@@ -4,7 +4,7 @@
 
 /* Sidebar logo */
 .side-nav__brand {
-    background: url('./new-rs-logo.png') no-repeat center center !important;
+    background: url('./rs-logo.png') no-repeat center center !important;
     background-size: 170px auto !important;
     height: 70px !important;
     margin-top: 8px !important;
