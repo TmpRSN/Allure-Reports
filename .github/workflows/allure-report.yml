@@ -65,20 +65,21 @@ jobs:
         run: |
           allure generate allure-results --clean -o allure-report
 
-      # 🎨 8. Apply Custom Branding
+      # 🎨 8. Customize Allure Report
       - name: Customize Allure Report
         run: |
 
-          # Copy custom logo
-          cp allure-assets/rs-logo.png allure-report/app/rs-logo.png
+          # Ensure app directory exists
+          mkdir -p allure-report/app
 
-          # Copy custom CSS
-          cp allure-assets/styles.css allure-report/app/styles.css
+          # Copy custom branding files
+          cp .github/allure-assets/rs-logo.png allure-report/app/rs-logo.png
+          cp .github/allure-assets/styles.css allure-report/app/styles.css
 
-          # Inject CSS into index.html
+          # Inject custom CSS into index.html
           sed -i 's#</head>#<link rel="stylesheet" href="app/styles.css"></head>#' allure-report/index.html
 
-      # 🔥 9. Fix routing (SPA GitHub Pages)
+      # 🔥 9. Fix routing (SPA GitHub Pages support)
       - name: Fix GitHub Pages routing
         run: |
           cp allure-report/index.html allure-report/404.html
