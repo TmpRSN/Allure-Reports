@@ -88,6 +88,9 @@ jobs:
            # Replace all generated favicon references
            sed -i 's#href="assets/favicon[^"]*\.ico"#href="favicon.ico"#g' allure-report/index.html
 
+           # Change report name in summary.json
+           sed -i 's#"reportName":"Allure Report"#"reportName":"Test Report"#g' allure-report/widgets/summary.json
+
       # 🔥 9. Fix routing (SPA GitHub Pages support)
       - name: Fix GitHub Pages routing
         run: |
