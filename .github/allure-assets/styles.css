@@ -1,12 +1,13 @@
 /* =========================================
-             REDSHIFT NETWORKS 
+   REDSHIFT NETWORKS - ALLURE BRANDING
    ========================================= */
 
 .side-nav__brand {
     background: url('./rs-logo.png') no-repeat center center !important;
-    background-size: 240px auto !important;
-    height: 85px !important;
-    margin-top: 10px !important;
+    background-size: 180px auto !important;
+    height: 55px !important;
+    margin-top: 5px !important;
+    margin-bottom: 10px !important;
 }
 
 /* Hide default ALLURE text/logo */
@@ -15,20 +16,7 @@
     display: none !important;
 }
 
-/* Optional: Improve sidebar spacing */
+/* Optional sidebar spacing */
 .side-nav {
-    padding-top: 10px !important;
-}
-
-/* Optional: Custom page background */
-body {
-    background-color: #f7f9fc !important;
-}
-
-/* Optional: Better card appearance */
-.widget,
-.chart,
-.test-result,
-.test-result-overview {
-    border-radius: 10px !important;
+    padding-top: 5px !important;
 }
