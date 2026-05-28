@@ -29,7 +29,9 @@ jobs:
       # 📁 3. Prepare allure-results
       - name: Prepare Allure Results
         run: |
+          rm -rf allure-results
           mkdir -p allure-results
+
           cp -r results-repo/allure-results/. allure-results/
 
       # 🔥 4. Restore HISTORY (Trend Support)
@@ -60,6 +62,16 @@ jobs:
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
           allure --version
 
+      # 🧹 Temporary cleanup unwanted suites
+      - name: Cleanup unwanted suite results
+        run: |
+          echo "Removing unwanted suites..."
+
+          grep -rl '"name":"Suite"' allure-results | xargs rm -f || true
+          grep -rl '"name":"Sanity Suite"' allure-results | xargs rm -f || true
+
+          echo "Cleanup completed"
+
       # ✅ 7. Generate Allure Report
       - name: Generate Allure Report
         run: |
@@ -79,17 +91,17 @@ jobs:
           # Inject custom CSS into index.html
           sed -i 's#</head>#<link rel="stylesheet" href="app/styles.css"></head>#' allure-report/index.html
 
-           # Change browser tab title
-           sed -i 's#<title>Allure Report</title>#<title>Test Report</title>#' allure-report/index.html
+          # Change browser tab title
+          sed -i 's#<title>Allure Report</title>#<title>Test Report</title>#' allure-report/index.html
 
-           # Copy custom favicon
-           cp .github/allure-assets/rs-favicon.ico allure-report/favicon.ico
+          # Copy custom favicon
+          cp .github/allure-assets/rs-favicon.ico allure-report/favicon.ico
 
-           # Replace all generated favicon references
-           sed -i 's#href="assets/favicon[^"]*\.ico"#href="favicon.ico"#g' allure-report/index.html
+          # Replace all generated favicon references
+          sed -i 's#href="assets/favicon[^"]*\.ico"#href="favicon.ico"#g' allure-report/index.html
 
-           # Change report name in summary.json
-           sed -i 's#"reportName":"Allure Report"#"reportName":"Test Report"#g' allure-report/widgets/summary.json
+          # Change report name in summary.json
+          sed -i 's#"reportName":"Allure Report"#"reportName":"Test Report"#g' allure-report/widgets/summary.json
 
       # 🔥 9. Fix routing (SPA GitHub Pages support)
       - name: Fix GitHub Pages routing
