@@ -26,50 +26,21 @@ jobs:
           mkdir -p allure-results
           cp -r results-repo/allure-results/. allure-results/
 
-      # 🔥 4. Restore HISTORY (Trend Support)
-      - name: Restore Allure History
+      # 🧹 4. Clean ALL history and trends (fresh start)
+      - name: Clean History and Trends
         run: |
-          git clone --depth 1 --branch gh-pages https://github.com/${{ github.repository }} gh-pages || echo "No gh-pages yet"
-          if [ -d "gh-pages/history" ]; then
-            echo "Restoring history..."
-            mkdir -p allure-results/history
-            cp -r gh-pages/history/* allure-results/history/
-          else
-            echo "No history found (first run)"
-          fi
+          echo "Wiping all history and trend data..."
+          rm -rf allure-results/history
+          mkdir -p allure-results/history
+          echo "History and trends cleared. Starting fresh."
 
-      # 🧹 5. Keep only latest 10 trend runs
-      - name: Trim Allure History
-        run: |
-          # Trim trend files
-          for file in history-trend.json duration-trend.json retry-trend.json categories-trend.json
-          do
-            if [ -f "allure-results/history/$file" ]; then
-              jq '.[-10:]' "allure-results/history/$file" > temp.json
-              mv temp.json "allure-results/history/$file"
-            fi
-          done
-
-          # Trim per-test history entries in history.json
-          if [ -f "allure-results/history/history.json" ]; then
-            jq 'to_entries | map(.value.items = (.value.items | if length > 10 then .[-10:] else . end) | .value.statistic = (.value.items | {
-              failed: (map(select(.status == "failed")) | length),
-              broken: (map(select(.status == "broken")) | length),
-              passed: (map(select(.status == "passed")) | length),
-              skipped: (map(select(.status == "skipped")) | length),
-              unknown: (map(select(.status == "unknown")) | length),
-              total: length
-            })) | from_entries' allure-results/history/history.json > temp.json
-            mv temp.json allure-results/history/history.json
-          fi
-
-      # 🔍 6. Debug files
+      # 🔍 5. Debug files
       - name: Debug files
         run: |
           echo "Allure Results:"
           ls -R allure-results || true
 
-      # ✅ 7. Install Allure
+      # ✅ 6. Install Allure
       - name: Install Allure
         run: |
           curl -L -o allure.tgz https://github.com/allure-framework/allure2/releases/download/2.39.0/allure-2.39.0.tgz
@@ -78,12 +49,12 @@ jobs:
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
           allure --version
 
-      # ✅ 8. Generate Allure Report
+      # ✅ 7. Generate Allure Report
       - name: Generate Allure Report
         run: |
           allure generate allure-results --clean -o allure-report
 
-      # 🎨 9. Customize Allure Report
+      # 🎨 8. Customize Allure Report
       - name: Customize Allure Report
         run: |
           mkdir -p allure-report/app
@@ -95,12 +66,12 @@ jobs:
           sed -i 's#href="assets/favicon[^"]*\.ico"#href="favicon.ico"#g' allure-report/index.html
           sed -i 's#"reportName":"Allure Report"#"reportName":"Test Report"#g' allure-report/widgets/summary.json
 
-      # 🔥 10. Fix routing (SPA GitHub Pages support)
+      # 🔥 9. Fix routing (SPA GitHub Pages support)
       - name: Fix GitHub Pages routing
         run: |
           cp allure-report/index.html allure-report/404.html
 
-      # 🚀 11. Deploy report to GitHub Pages
+      # 🚀 10. Deploy report to GitHub Pages
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
