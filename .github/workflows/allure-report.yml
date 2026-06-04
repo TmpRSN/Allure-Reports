@@ -41,6 +41,7 @@ jobs:
       # 🧹 5. Keep only latest 10 trend runs
       - name: Trim Allure History
         run: |
+          # Trim trend files
           for file in history-trend.json duration-trend.json retry-trend.json categories-trend.json
           do
             if [ -f "allure-results/history/$file" ]; then
@@ -48,6 +49,19 @@ jobs:
               mv temp.json "allure-results/history/$file"
             fi
           done
+
+          # Trim per-test history entries in history.json
+          if [ -f "allure-results/history/history.json" ]; then
+            jq 'to_entries | map(.value.items = (.value.items | if length > 10 then .[-10:] else . end) | .value.statistic = (.value.items | {
+              failed: (map(select(.status == "failed")) | length),
+              broken: (map(select(.status == "broken")) | length),
+              passed: (map(select(.status == "passed")) | length),
+              skipped: (map(select(.status == "skipped")) | length),
+              unknown: (map(select(.status == "unknown")) | length),
+              total: length
+            })) | from_entries' allure-results/history/history.json > temp.json
+            mv temp.json allure-results/history/history.json
+          fi
 
       # 🔍 6. Debug files
       - name: Debug files
