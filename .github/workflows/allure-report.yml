@@ -3,11 +3,11 @@ name: Generate & Publish Allure Report
 on:
 push:
 branches:
-- main
+  - main
 
 repository_dispatch:
 types:
-- allure-update
+  - allure-update
 
 permissions:
 contents: write
@@ -17,7 +17,6 @@ deploy:
 runs-on: ubuntu-latest
 
 steps:
-
   # 1. Checkout Reports repository
   - name: Checkout Reports repository
     uses: actions/checkout@v3
