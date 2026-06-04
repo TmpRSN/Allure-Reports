@@ -32,7 +32,7 @@ jobs:
           mkdir -p allure-results
           cp -r results-repo/allure-results/. allure-results/
 
-      # 🔥 4. Restore HISTORY (Trend Support)
+        # 🔥 4. Restore HISTORY (Trend Support)
       - name: Restore Allure History
         run: |
           git clone --depth 1 --branch gh-pages https://github.com/${{ github.repository }} gh-pages || echo "No gh-pages yet"
@@ -44,14 +44,25 @@ jobs:
           else
             echo "No history found (first run)"
           fi
+		  
+		# 🧹 5. Keep only latest 10 trend runs
+      - name: Trim Allure History
+        run: |
+          for file in history-trend.json duration-trend.json retry-trend.json categories-trend.json
+          do
+            if [ -f "allure-results/history/$file" ]; then
+              jq '.[-10:]' "allure-results/history/$file" > temp.json
+              mv temp.json "allure-results/history/$file"
+            fi
+          done
 
-      # 🔍 5. Debug files
+      # 🔍 6. Debug files
       - name: Debug files
         run: |
           echo "Allure Results:"
           ls -R allure-results || true
 
-      # ✅ 6. Install Allure
+      # ✅ 7. Install Allure
       - name: Install Allure
         run: |
           curl -L -o allure.tgz https://github.com/allure-framework/allure2/releases/download/2.39.0/allure-2.39.0.tgz
@@ -60,12 +71,12 @@ jobs:
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
           allure --version
 
-      # ✅ 7. Generate Allure Report
+      # ✅ 8. Generate Allure Report
       - name: Generate Allure Report
         run: |
           allure generate allure-results --clean -o allure-report
 
-      # 🎨 8. Customize Allure Report
+      # 🎨 9. Customize Allure Report
       - name: Customize Allure Report
         run: |
 
@@ -91,12 +102,12 @@ jobs:
            # Change report name in summary.json
            sed -i 's#"reportName":"Allure Report"#"reportName":"Test Report"#g' allure-report/widgets/summary.json
 
-      # 🔥 9. Fix routing (SPA GitHub Pages support)
+      # 🔥 10. Fix routing (SPA GitHub Pages support)
       - name: Fix GitHub Pages routing
         run: |
           cp allure-report/index.html allure-report/404.html
 
-      # 🚀 10. Deploy report to GitHub Pages
+      # 🚀 11. Deploy report to GitHub Pages
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
