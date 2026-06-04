@@ -32,7 +32,7 @@ jobs:
           mkdir -p allure-results
           cp -r results-repo/allure-results/. allure-results/
 
-        # 🔥 4. Restore HISTORY (Trend Support)
+              # 🔥 4. Restore HISTORY (Trend Support)
       - name: Restore Allure History
         run: |
           git clone --depth 1 --branch gh-pages https://github.com/${{ github.repository }} gh-pages || echo "No gh-pages yet"
@@ -44,8 +44,8 @@ jobs:
           else
             echo "No history found (first run)"
           fi
-		  
-		# 🧹 5. Keep only latest 10 trend runs
+
+      # 🧹 5. Keep only latest 10 trend runs
       - name: Trim Allure History
         run: |
           for file in history-trend.json duration-trend.json retry-trend.json categories-trend.json
@@ -55,7 +55,7 @@ jobs:
               mv temp.json "allure-results/history/$file"
             fi
           done
-
+		  
       # 🔍 6. Debug files
       - name: Debug files
         run: |
