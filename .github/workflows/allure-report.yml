@@ -27,7 +27,7 @@ jobs:
       - name: Prepare Allure Results
         run: |
           mkdir -p allure-results
-          cp -r results-repo/main-results/. allure-results/
+          cp -r results-repo/allure-results/. allure-results/
 
       # 🔥 4. Restore MAIN HISTORY (Trend Support)
       - name: Restore Allure History
