@@ -15,7 +15,6 @@ jobs:
 deploy:
 runs-on: ubuntu-latest
 
-```
 steps:
 
   # ✅ 1. Checkout REPORTS repo (this repo)
@@ -121,4 +120,4 @@ steps:
       github_token: ${{ secrets.GITHUB_TOKEN }}
       publish_dir: deploy
       keep_files: true
-```
+    
