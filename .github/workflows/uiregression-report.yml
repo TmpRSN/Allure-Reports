@@ -1,4 +1,4 @@
-name: Generate & Publish Regression Report
+name: Generate & Publish UI Regression Report
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     paths-ignore:
       - '.github/workflows/**'
   repository_dispatch:
-    types: [regression-results-update]
+    types: [uiregression-results-update]
 
 permissions:
   contents: write
@@ -25,20 +25,20 @@ jobs:
         run: |
           git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/TmpRSN/Allure-Results.git results-repo
 
-      # 📁 3. Prepare REGRESSION allure-results
+      # 📁 3. Prepare UI REGRESSION allure-results
       - name: Prepare Allure Results
         run: |
           mkdir -p allure-results
-          cp -r results-repo/regression-results/. allure-results/
+          cp -r results-repo/uiregression-results/. allure-results/
 
-      # 🔥 4. Restore REGRESSION HISTORY (Trend Support)
+      # 🔥 4. Restore UI REGRESSION HISTORY (Trend Support)
       - name: Restore Allure History
         run: |
           git clone --depth 1 --branch gh-pages https://github.com/${{ github.repository }} gh-pages || echo "No gh-pages yet"
-          if [ -d "gh-pages/regression/history" ]; then
+          if [ -d "gh-pages/uiregression/history" ]; then
             echo "Restoring history..."
             mkdir -p allure-results/history
-            cp -r gh-pages/regression/history/* allure-results/history/
+            cp -r gh-pages/uiregression/history/* allure-results/history/
           else
             echo "No history found (first run)"
           fi
@@ -102,13 +102,13 @@ jobs:
         run: |
           cp allure-report/index.html allure-report/404.html
 
-      # 📦 11. Prepare REGRESSION Pages Folder
-      - name: Prepare Regression Pages Folder
+      # 📦 11. Prepare UI REGRESSION Pages Folder
+      - name: Prepare UI Regression Pages Folder
         run: |
-          mkdir -p deploy/regression
-          cp -r allure-report/* deploy/regression/
+          mkdir -p deploy/uiregression
+          cp -r allure-report/* deploy/uiregression/
 
-      # 🚀 12. Deploy REGRESSION report to GitHub Pages
+      # 🚀 12. Deploy UI REGRESSION report to GitHub Pages
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
