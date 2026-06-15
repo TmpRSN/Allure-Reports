@@ -1,1 +1,1 @@
-{"total":1,"items":[{"uid":"81efe9e1ead3a60d392bde3d42c7f1b4","name":"UI Sanity","statistic":{"failed":31,"broken":1,"skipped":0,"passed":196,"unknown":0,"total":228}}]}
+{"total":1,"items":[{"uid":"d37a075b2557777db5edbb5369cfa8b8","name":"UI Smoke","statistic":{"failed":2,"broken":1,"skipped":0,"passed":225,"unknown":0,"total":228}}]}
