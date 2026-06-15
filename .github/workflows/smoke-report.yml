@@ -1,11 +1,11 @@
-name: Generate & Publish Sanity Report
+name: Generate & Publish Smoke Report
 
 on:
   push:
     branches:
       - main
   repository_dispatch:
-    types: [sanity-results-update]
+    types: [smoke-results-update]
 
 permissions:
   contents: write
@@ -27,16 +27,16 @@ jobs:
       - name: Prepare Allure Results
         run: |
           mkdir -p allure-results
-          cp -r results-repo/sanity-results/. allure-results/
+          cp -r results-repo/smoke-results/. allure-results/
 
       # 🔥 4. Restore SANITY HISTORY (Trend Support)
       - name: Restore Allure History
         run: |
           git clone --depth 1 --branch gh-pages https://github.com/${{ github.repository }} gh-pages || echo "No gh-pages yet"
-          if [ -d "gh-pages/sanity/history" ]; then
+          if [ -d "gh-pages/smoke/history" ]; then
             echo "Restoring history..."
             mkdir -p allure-results/history
-            cp -r gh-pages/sanity/history/* allure-results/history/
+            cp -r gh-pages/smoke/history/* allure-results/history/
           else
             echo "No history found (first run)"
           fi
@@ -101,12 +101,12 @@ jobs:
           cp allure-report/index.html allure-report/404.html
 
       # 📦 11. Prepare SANITY Pages Folder
-      - name: Prepare Sanity Pages Folder
+      - name: Prepare Smoke Pages Folder
         run: |
-          mkdir -p deploy/sanity
-          cp -r allure-report/* deploy/sanity/
+          mkdir -p deploy/smoke
+          cp -r allure-report/* deploy/smoke/
 
-      # 🚀 12. Deploy SANITY report to GitHub Pages
+      # 🚀 12. Deploy SMOKE report to GitHub Pages
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
