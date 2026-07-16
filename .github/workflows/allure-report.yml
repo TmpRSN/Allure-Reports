@@ -15,35 +15,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ✅ 1. Checkout REPORTS repo (this repo)
+      # 1. Checkout Reports Repository
       - name: Checkout Reports repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # 🔐 2. Clone PRIVATE Allure Results repo
+      # 2. Setup Node.js (Required for Allure)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 3. Clone Private Allure Results Repository
       - name: Clone Allure Results (Private Repo)
         run: |
           git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/TmpRSN/Allure-Results.git results-repo
 
-      # 📁 3. Prepare MAIN allure-results
+      # 4. Prepare Allure Results
       - name: Prepare Allure Results
         run: |
           mkdir -p allure-results
           cp -r results-repo/allure-results/. allure-results/
 
-      # 🔥 4. Restore MAIN HISTORY (Trend Support)
+      # 5. Restore Previous History
       - name: Restore Allure History
         run: |
-          git clone --depth 1 --branch gh-pages https://github.com/${{ github.repository }} gh-pages || echo "No gh-pages yet"
+          git clone --depth 1 --branch gh-pages https://github.com/${{ github.repository }} gh-pages || true
 
           if [ -d "gh-pages/main/history" ]; then
-            echo "Restoring history..."
             mkdir -p allure-results/history
             cp -r gh-pages/main/history/* allure-results/history/
           else
-            echo "No history found (first run)"
+            echo "No previous history found."
           fi
 
-      # 🧹 5. Keep only latest 10 trend runs
+      # 6. Trim History (Keep Last 10 Runs)
       - name: Trim Allure History
         run: |
           for file in history-trend.json duration-trend.json retry-trend.json categories-trend.json
@@ -56,53 +61,35 @@ jobs:
 
           if [ -f "allure-results/history/history.json" ]; then
             jq 'to_entries | map(.value.items = (.value.items | if length > 10 then .[-10:] else . end) | .value.statistic = (.value.items | {
-              failed: (map(select(.status == "failed")) | length),
-              broken: (map(select(.status == "broken")) | length),
-              passed: (map(select(.status == "passed")) | length),
-              skipped: (map(select(.status == "skipped")) | length),
-              unknown: (map(select(.status == "unknown")) | length),
-              total: length
+              failed:(map(select(.status=="failed"))|length),
+              broken:(map(select(.status=="broken"))|length),
+              passed:(map(select(.status=="passed"))|length),
+              skipped:(map(select(.status=="skipped"))|length),
+              unknown:(map(select(.status=="unknown"))|length),
+              total:length
             })) | from_entries' allure-results/history/history.json > temp.json
 
             mv temp.json allure-results/history/history.json
           fi
 
-      # 🔍 6. Debug files
-      - name: Debug Allure Results
+      # 7. Debug
+      - name: Debug Files
         run: |
-          echo "===== Allure Results ====="
-          ls -R allure-results || true
+          echo "===== ALLURE RESULTS ====="
+          ls -R allure-results
 
-      # ✅ 7. Install Allure 2.43.0
+      # 8. Install Allure
       - name: Install Allure
         run: |
-          set -e
+          npm install -g allure-commandline@2.43.0
+          allure --version
 
-          ALLURE_VERSION=2.43.0
-          URL="https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.tgz"
-
-          echo "Downloading Allure ${ALLURE_VERSION}"
-          echo "$URL"
-
-          curl -fL "$URL" -o allure.tgz
-
-          echo "Downloaded file:"
-          ls -lh allure.tgz
-          file allure.tgz
-
-          tar -xzf allure.tgz
-
-          sudo mv allure-${ALLURE_VERSION} /opt/allure
-          echo "/opt/allure/bin" >> $GITHUB_PATH
-
-          /opt/allure/bin/allure --version
-
-      # ✅ 8. Generate Allure Report
+      # 9. Generate Report
       - name: Generate Allure Report
         run: |
           allure generate allure-results --clean -o allure-report
 
-      # 🎨 9. Customize Allure Report
+      # 10. Customize Report
       - name: Customize Allure Report
         run: |
           mkdir -p allure-report/app
@@ -116,18 +103,18 @@ jobs:
           sed -i 's#href="assets/favicon[^"]*\.ico"#href="favicon.ico"#g' allure-report/index.html
           sed -i 's#"reportName":"Allure Report"#"reportName":"Test Report"#g' allure-report/widgets/summary.json
 
-      # 🔥 10. Fix routing (SPA support)
+      # 11. GitHub Pages SPA Support
       - name: Fix GitHub Pages Routing
         run: |
           cp allure-report/index.html allure-report/404.html
 
-      # 📦 11. Prepare deploy folder
-      - name: Prepare Main Pages Folder
+      # 12. Prepare Deploy Folder
+      - name: Prepare Deploy Folder
         run: |
           mkdir -p deploy/main
           cp -r allure-report/* deploy/main/
 
-      # 🚀 12. Deploy to GitHub Pages
+      # 13. Deploy to GitHub Pages
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
