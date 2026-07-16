@@ -72,9 +72,9 @@ jobs:
       # ✅ 7. Install Allure
       - name: Install Allure
         run: |
-          curl -L -o allure.tgz https://github.com/allure-framework/allure2/releases/download/2.39.0/allure-2.39.0.tgz
+          curl -L -o allure.tgz https://github.com/allure-framework/allure2/releases/download/2.43.0/allure-2.43.0.tgz
           tar -zxvf allure.tgz
-          sudo mv allure-2.39.0 /opt/allure
+          sudo mv allure-2.43.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
           allure --version
 
