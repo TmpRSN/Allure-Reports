@@ -1,1 +1,1 @@
-{"total":1,"items":[{"uid":"320a2f053437678001a27ce72a1dd6f3","name":"UI Regression","statistic":{"failed":9,"broken":33,"skipped":0,"passed":321,"unknown":0,"total":363}}]}
+{"total":1,"items":[{"uid":"320a2f053437678001a27ce72a1dd6f3","name":"UI Regression","statistic":{"failed":9,"broken":38,"skipped":0,"passed":316,"unknown":0,"total":363}}]}
